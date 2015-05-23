@@ -32,8 +32,7 @@ public class GpsService extends Service {
     private String provider;
 
     //database
-//    SQLiteDatabase db;
-//    ProjectSQL sql;
+    ProjectSQL sql = new ProjectSQL(GpsService.this);
 
     @Override
     public void onCreate() {
@@ -50,7 +49,6 @@ public class GpsService extends Service {
                 handler.sendEmptyMessageDelayed(0, 0);
             }
         });
-
         Log.d("GPSService", "++onCreate++");
     }
 
@@ -91,6 +89,7 @@ public class GpsService extends Service {
     //
     // LCC DFS 좌표변환을 위한 기초 자료
     // LCC DFS 좌표변환 위경도->좌표 ( v1:위도, v2:경도 )
+    // Parameter: v1 Latitude, v2 Longitude
     // Returns int array [gridx, gridy]
     public int[] dfs_xy_conv(double v1, double v2) {
         double RE = 6371.00877; // 지구 반경(km)
@@ -124,6 +123,9 @@ public class GpsService extends Service {
         if (theta < -Math.PI) theta += 2.0 * Math.PI;
         theta *= sn;
 
+        Log.d("GPSService", "theta: " + theta);
+        Log.d("GPSService", "double gridx: " + Math.floor(ra * Math.sin(theta) + XO + 0.5));
+
         int gridx = (int) Math.floor(ra * Math.sin(theta) + XO + 0.5);
         int gridy = (int) Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
 
@@ -141,13 +143,13 @@ public class GpsService extends Service {
             osw = new FileWriter("/sdcard/dlns/gps/" + getFileName(), true);
             writer = new BufferedWriter(osw);
             writer.write(getCurrentTime() + "\t" + longitude + "\t" + latitude + "\t" + speed + "\t" + accuracy + "\n");
-            int [] gridxy = dfs_xy_conv(longitude, latitude);
+            int [] gridxy = dfs_xy_conv(latitude, longitude);
             writer.write("x: " + gridxy[0] + ", y: " + gridxy[1] + "\n\n");
             writer.close();
             Log.d("GPSService", "/sdcard/dlns/gps/" + getFileName());
 
             //database
-//            sql.addCoord(gridxy[0], gridxy[1], "Area");
+            sql.addCoord(gridxy[0], gridxy[1], "Area");
             Log.d("GPSService", "coord added to database");
         } catch (IOException e) {
             e.printStackTrace();
