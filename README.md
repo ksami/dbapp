@@ -7,5 +7,5 @@
 - [ ] Implement xml parser
 - [ ] Combine xml parser and http request
 - [x] Implement sqlite
-- [ ] Combine gps and sqlite
+- [x] Combine gps and sqlite
 - [ ] Combine xml and sqlite
