@@ -1,4 +1,4 @@
-package com.example.cse.myapplication;
+package ksami.gpsservicetest;
 
 import java.util.Date;
 

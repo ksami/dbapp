@@ -19,6 +19,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 @SuppressLint({ "SdCardPath", "HandlerLeak"})
 public class GpsService extends Service {
@@ -28,6 +30,10 @@ public class GpsService extends Service {
     Location pLocation;
     LocationManager mlocManager;
     private String provider;
+
+    //database
+//    SQLiteDatabase db;
+//    ProjectSQL sql;
 
     @Override
     public void onCreate() {
@@ -44,6 +50,7 @@ public class GpsService extends Service {
                 handler.sendEmptyMessageDelayed(0, 0);
             }
         });
+
         Log.d("GPSService", "++onCreate++");
     }
 
@@ -81,6 +88,49 @@ public class GpsService extends Service {
         }
     };
 
+    //
+    // LCC DFS 좌표변환을 위한 기초 자료
+    // LCC DFS 좌표변환 위경도->좌표 ( v1:위도, v2:경도 )
+    // Returns int array [gridx, gridy]
+    public int[] dfs_xy_conv(double v1, double v2) {
+        double RE = 6371.00877; // 지구 반경(km)
+        double GRID = 5.0; // 격자 간격(km)
+        double SLAT1 = 30.0; // 투영 위도1(degree)
+        double SLAT2 = 60.0; // 투영 위도2(degree)
+        double OLON = 126.0; // 기준점 경도(degree)
+        double OLAT = 38.0; // 기준점 위도(degree)
+        int XO = 43; // 기준점 X좌표(GRID)
+        int YO = 136; // 기1준점 Y좌표(GRID)
+
+        double DEGRAD = Math.PI / 180.0;
+
+        double re = RE / GRID;
+        double slat1 = SLAT1 * DEGRAD;
+        double slat2 = SLAT2 * DEGRAD;
+        double olon = OLON * DEGRAD;
+        double olat = OLAT * DEGRAD;
+
+        double sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+        double sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+        double ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
+        ro = re * sf / Math.pow(ro, sn);
+
+        double ra = Math.tan(Math.PI * 0.25 + (v1) * DEGRAD * 0.5);
+        ra = re * sf / Math.pow(ra, sn);
+        double theta = v2 * DEGRAD - olon;
+        if (theta > Math.PI) theta -= 2.0 * Math.PI;
+        if (theta < -Math.PI) theta += 2.0 * Math.PI;
+        theta *= sn;
+
+        int gridx = (int) Math.floor(ra * Math.sin(theta) + XO + 0.5);
+        int gridy = (int) Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
+
+        return new int[] {gridx, gridy};
+    }
+
+
     private FileWriter osw;
     private BufferedWriter writer;
     private void saveFile(double longitude, double latitude, double speed, double accuracy){
@@ -91,8 +141,14 @@ public class GpsService extends Service {
             osw = new FileWriter("/sdcard/dlns/gps/" + getFileName(), true);
             writer = new BufferedWriter(osw);
             writer.write(getCurrentTime() + "\t" + longitude + "\t" + latitude + "\t" + speed + "\t" + accuracy + "\n");
+            int [] gridxy = dfs_xy_conv(longitude, latitude);
+            writer.write("x: " + gridxy[0] + ", y: " + gridxy[1] + "\n\n");
             writer.close();
             Log.d("GPSService", "/sdcard/dlns/gps/" + getFileName());
+
+            //database
+//            sql.addCoord(gridxy[0], gridxy[1], "Area");
+            Log.d("GPSService", "coord added to database");
         } catch (IOException e) {
             e.printStackTrace();
         }

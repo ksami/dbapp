@@ -1,3 +1,5 @@
+package ksami.gpsservicetest;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +9,8 @@ import android.provider.ContactsContract;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class ProjectSQL extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1; // final?
@@ -16,7 +20,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
     private static final String TABLE_NAME_USERPOS = "user_position";
     private static final String TABLE_NAME_FUTPOS = "future_position";
     private static final String KEY_DATE = "Timestamp";
-    private static final String KEY_HOUR = "Hour"
+    private static final String KEY_HOUR = "Hour";
     private static final String KEY_DAY_OF_WEEK = "Day_of_week";
     private static final String KEY_X = "Grid_X";
     private static final String KEY_Y = "Grid_Y";
@@ -29,7 +33,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
-        String createUPDB = "CREATE TABLE %s (%s %s, %s %s, %s %s, %s %s, %s %s, %s(%s, %s))".format(TABLE_NAME_USERPOS, KEY_DATE, "DATETIME", KEY_HOUR, "INTEGER", KEY_DAY, "INTEGER",
+        String createUPDB = "CREATE TABLE %s (%s %s, %s %s, %s %s, %s %s, %s %s, %s(%s, %s))".format(TABLE_NAME_USERPOS, KEY_DATE, "DATETIME", KEY_HOUR, "INTEGER", KEY_DAY_OF_WEEK, "INTEGER",
                 KEY_X, "INTEGER", KEY_Y, "INTEGER", "PRIMARY KEY", KEY_DATE, KEY_HOUR);
         String createFPDB = "CREATE TABLE %s (%s %s, %s %s, %s %s, %s %s, %s %s, %s %s)".format(TABLE_NAME_FUTPOS, KEY_HOUR, "INTEGER", KEY_DAY_OF_WEEK, "INTEGER",
                 KEY_X, "INTEGER", KEY_Y, "INTEGER", KEY_AREA, "TEXT", KEY_PROB, "DOUBLE");
@@ -118,7 +122,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
                 Date v1 = null;
                 try {
                     v1 = format.parse(cursor.getString(0));
-                } catch (ParseException e) {
+                } catch (java.text.ParseException e) {
                     e.printStackTrace();
                 }
                 int v2 = cursor.getInt(cursor.getInt(1));
@@ -166,21 +170,21 @@ public class ProjectSQL extends SQLiteOpenHelper {
     /*
      * Future position table manage section
      */
-    public void updateFutpos(newPrediction newData)
+    public void updateFutpos(NewPrediction newData)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        String Query = "SELECT %s FROM %s WHERE %s = %d AND %s = %d AND %s = %s".format
+        String query = "SELECT %s FROM %s WHERE %s = %d AND %s = %d AND %s = %s".format
                 (KEY_PROB, TABLE_NAME_FUTPOS, KEY_HOUR, newData.hour, KEY_DAY_OF_WEEK, newData.day_of_week, KEY_AREA, newData.fut_area_name);
         Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor.getCount == 0)
-        {
-            //insert newData
-        }
-        else
-        {
-            //Update with newData
-        }
+//
+//        if (cursor.getCount == 0)
+//        {
+//            //insert newData
+//        }
+//        else
+//        {
+//            //Update with newData
+//        }
 
         cursor.close();
         db.close();

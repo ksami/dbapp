@@ -1,3 +1,5 @@
+package ksami.gpsservicetest;
+
 public class NewPrediction {
 	int hour;
 	int day_of_week;
