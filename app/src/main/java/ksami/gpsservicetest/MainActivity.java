@@ -19,10 +19,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-
+import android.os.StrictMode;
 
 
 public class MainActivity extends Activity {
+    public static final String GRIDX = "ksami.gpsservicetest.gridx";
+    public static final String GRIDY = "ksami.gpsservicetest.gridy";
+
     String TAG = "MainActivity";
 
     Button button_personalData;
@@ -34,6 +37,9 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -100,6 +106,17 @@ public class MainActivity extends Activity {
         stopService(intent);
         button_start.setEnabled(true);
         button_stop.setEnabled(false);
+    }
+
+    // Display weather info
+    public void button3(View v){
+        int gridx = 59;
+        int gridy = 125;
+
+        Intent intent = new Intent(this, DisplayWeatherActivity.class);
+        intent.putExtra(GRIDX, Integer.toString(gridx));
+        intent.putExtra(GRIDY, Integer.toString(gridy));
+        startActivity(intent);
     }
 
     void registerRestartAlarm() {
