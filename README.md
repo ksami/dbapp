@@ -4,8 +4,8 @@
 
 ### todo
 - [x] Translate gps-xy from js to java
-- [ ] Implement xml parser
-- [ ] Combine xml parser and http request
+- [x] Implement xml parser
+- [x] Combine xml and gps
 - [x] Implement sqlite
 - [x] Combine gps and sqlite
 - [ ] Combine xml and sqlite
