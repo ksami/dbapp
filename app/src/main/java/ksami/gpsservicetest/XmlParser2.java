@@ -33,7 +33,7 @@ public class XmlParser2
     }
     public static ArrayList<KmaData> parsing(int gridx,int gridy){
     
-        String rssFeed = "http://www.kma.go.kr/wid/queryDFS.jsp?gridx=%s&gridy=%s";
+        String rssFeed = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?gridx=%s&gridy=%s";
         
         String url = String.format(rssFeed, gridx, gridy);
         
@@ -42,6 +42,21 @@ public class XmlParser2
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(url);
+
+            //area name
+            NodeList areaName = doc.getElementsByTagName("category");
+            for (int i = 0; i < areaName.getLength(); i++) {
+                Node dataNode = areaName.item(i);
+                if(dataNode.getNodeType()==Node.ELEMENT_NODE) {
+                    NodeList children = dataNode.getChildNodes();
+                    for (int j=0; j<children.getLength(); j++) {
+                        Node childNode = children.item(j);
+                        System.out.println(childNode.getNodeValue());
+                    }
+
+                }
+            }
+
             NodeList bodyList = doc.getElementsByTagName("data");   //split using data tag "<data> ... </data>"
             
             for (int i = 0; i < bodyList.getLength(); i++)
