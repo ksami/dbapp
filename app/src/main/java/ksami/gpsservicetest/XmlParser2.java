@@ -105,7 +105,7 @@ public class XmlParser2
                 }
             }
 
-            for (int i = 0; i < bodyList.getLength(); i++)  //print result
+            for (int i = 0; i < bodyList.getLength()-1; i++)  //print result
             {
                 System.out.print(i + " ");
                 System.out.print("/day " + kmaList.get(i).day);
