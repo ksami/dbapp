@@ -14,10 +14,17 @@ import java.util.ArrayList;
 
 public class DisplayWeatherActivity extends ActionBarActivity {
 
+    //database
+    MyApplication appState;
+    ProjectSQL sql;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
+
+        appState = (MyApplication) getApplicationContext();
+        sql = appState.getDb();
 
         Intent intent = getIntent();
         int gridx = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDX));

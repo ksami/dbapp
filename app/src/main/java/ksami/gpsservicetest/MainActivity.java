@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.os.StrictMode;
 
 
+
+
 public class MainActivity extends Activity {
     public static final String GRIDX = "ksami.gpsservicetest.gridx";
     public static final String GRIDY = "ksami.gpsservicetest.gridy";
@@ -32,6 +34,8 @@ public class MainActivity extends Activity {
     Button button_start;
     Button button_stop;
 
+    ProjectSQL sql;
+    MyApplication appState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,11 @@ public class MainActivity extends Activity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        // for accessing sql from anywhere
+        sql = new ProjectSQL(MainActivity.this);
+        appState = (MyApplication) getApplicationContext();
+        appState.setData(sql);
     }
 
     @Override
@@ -117,6 +126,8 @@ public class MainActivity extends Activity {
         intent.putExtra(GRIDX, Integer.toString(gridx));
         intent.putExtra(GRIDY, Integer.toString(gridy));
         startActivity(intent);
+
+
     }
 
     void registerRestartAlarm() {

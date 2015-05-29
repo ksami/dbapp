@@ -36,11 +36,14 @@ public class GpsService extends Service {
     private String provider;
 
     //database
-    ProjectSQL sql = new ProjectSQL(GpsService.this);
+    MyApplication appState;
+    ProjectSQL sql;
 
-    @Override
     public void onCreate() {
         super.onCreate();
+
+        appState = (MyApplication) getApplicationContext();
+        sql = appState.getDb();
 
         this.mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         provider = LocationManager.GPS_PROVIDER;
