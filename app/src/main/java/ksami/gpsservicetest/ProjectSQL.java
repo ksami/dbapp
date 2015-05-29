@@ -197,8 +197,6 @@ public class ProjectSQL extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Calendar calendar = Calendar.getInstance();
-        Date yourdate = new Date();
-        calendar.setTime(yourdate);
         int hours = calendar.get(Calendar.HOUR_OF_DAY);
         // round to next multiple of 3
         switch(hours%3) {
