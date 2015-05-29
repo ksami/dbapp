@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ProjectSQL extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1; // final?
@@ -90,7 +91,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
             for(int i = 0; i < count; i++)
             {
                 if(x.date != null) {
-                    query += "timestamp = '" + format.format(x.date) + "'";
+                    query += "Timestamp = '" + format.format(x.date) + "'";
                     x.date = null;
                 } else if(x.time != -1) {
                     query += "hour = " + x.time;
@@ -122,7 +123,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
                 Date v1 = null;
                 try {
                     v1 = format.parse(cursor.getString(0));
-                } catch (java.text.ParseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 int v2 = cursor.getInt(cursor.getInt(1));
@@ -176,17 +177,84 @@ public class ProjectSQL extends SQLiteOpenHelper {
         String query = "SELECT %s FROM %s WHERE %s = %d AND %s = %d AND %s = %s".format
                 (KEY_PROB, TABLE_NAME_FUTPOS, KEY_HOUR, newData.hour, KEY_DAY_OF_WEEK, newData.day_of_week, KEY_AREA, newData.fut_area_name);
         Cursor cursor = db.rawQuery(query, null);
-//
-//        if (cursor.getCount == 0)
-//        {
-//            //insert newData
-//        }
-//        else
-//        {
-//            //Update with newData
-//        }
+
+        if (cursor.getCount() == 0)
+        {
+            //insert newData
+        }
+        else
+        {
+            //Update with newData
+        }
 
         cursor.close();
         db.close();
+    }
+
+
+    /* 1. Method to record user position */
+    public void addUserPos(int x, int y) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Calendar calendar = Calendar.getInstance();
+        Date yourdate = new Date();
+        calendar.setTime(yourdate);
+        int hours = calendar.get(Calendar.HOUR_OF_DAY);
+        // round to next multiple of 3
+        switch(hours%3) {
+            case 0:
+                break;
+            case 1:
+                hours += 2;
+                break;
+            case 2:
+                hours += 1;
+                break;
+        }
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+
+        db.execSQL("INSERT INTO " + TABLE_NAME_USERPOS + " VALUES ("
+                + "date('now'), "
+                + hours + ", "
+                + day + ", "
+                + x + ", "
+                + y + ")");
+        db.close();
+    }
+
+
+    /* 4. Query by date */
+    public LinkedList<UserPos> getUserPos(Date a, Date b) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        SimpleDateFormat dateform = new SimpleDateFormat("yyyy-MM-dd");
+
+        String d1 = dateform.format(a);
+        String d2 = dateform.format(b);
+
+        String query = "SELECT * FROM %s WHERE %s between '%s' and '%s'".format(
+                TABLE_NAME_USERPOS, KEY_DATE, d1, d2);
+
+        Cursor cursor = db.rawQuery(query, null);
+        LinkedList<UserPos> list = new LinkedList<UserPos>();
+        UserPos temp;
+
+        if(cursor.moveToFirst()){
+            do{
+                Date v1 = null;
+                try {
+                    v1 = dateform.parse(cursor.getString(0));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                int v2 = cursor.getInt(cursor.getInt(1));
+                int v3 = cursor.getInt(cursor.getInt(2));
+                int v4 = cursor.getInt(cursor.getInt(3));
+                int v5 = cursor.getInt(cursor.getInt(4));
+                temp = new UserPos(v1, v2, v3, v4, v5);
+                list.add(temp);
+            } while(cursor.moveToNext());
+        }
+
+        return list;
     }
 }

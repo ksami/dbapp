@@ -5,14 +5,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -133,6 +137,42 @@ public class GpsService extends Service {
     }
 
 
+    /** 위도와 경도 기반으로 주소를 리턴하는 메서드*/
+    public String getAddress(double lat, double lng){
+        String address = null;
+
+        //위치정보를 활용하기 위한 구글 API 객체
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        //주소 목록을 담기 위한 HashMap
+        List<Address> list = null;
+
+        try{
+            list = geocoder.getFromLocation(lat, lng, 1);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if(list == null){
+            Log.e("GPSService.getAddress", "주소 데이터 얻기 실패");
+            return null;
+        }
+
+        if(list.size() > 0){
+            Address addr = list.get(0);
+            address = addr.getLocality() + " "
+                    + addr.getThoroughfare();
+//            address = addr.getCountryName() + " "
+//                    + addr.getPostalCode() + " "
+//                    + addr.getLocality() + " "
+//                    + addr.getThoroughfare() + " "
+//                    + addr.getFeatureName();
+        }
+
+        return address;
+    }
+
+
     private FileWriter osw;
     private BufferedWriter writer;
     private void saveFile(double longitude, double latitude, double speed, double accuracy){
@@ -149,7 +189,8 @@ public class GpsService extends Service {
             Log.d("GPSService", "/sdcard/dlns/gps/" + getFileName());
 
             //database
-            sql.addCoord(gridxy[0], gridxy[1], "Area");
+            String area = getAddress(latitude, longitude);
+            sql.addCoord(gridxy[0], gridxy[1], area);
             Log.d("GPSService", "coord added to database");
         } catch (IOException e) {
             e.printStackTrace();
