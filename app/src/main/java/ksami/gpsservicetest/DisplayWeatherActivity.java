@@ -1,5 +1,6 @@
 package ksami.gpsservicetest;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -31,15 +32,16 @@ public class DisplayWeatherActivity extends ActionBarActivity {
         int gridy = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDY));
 
         ArrayList<KmaData> kmaList = XmlParser2.parsing(gridx, gridy);
-        String weatherInfo = "displaying weather info:\n\n";
-        for (int i = 0; i < 15; i++)  //display result
+        String weatherInfo = "";
+        for (int i = 0; i < 8; i++)  //display result
         {
             weatherInfo += i + " ";
             weatherInfo += "/day " + kmaList.get(i).day;
 
             weatherInfo += "/wfEn " +kmaList.get(i).wfEn + " ";
-            weatherInfo += "/tmn " +kmaList.get(i).tmn + " ";
-            weatherInfo += "/tmx " +kmaList.get(i).tmx + " ";
+            weatherInfo += "/temp " +kmaList.get(i).temp + " ";
+            //weatherInfo += "/tmn " +kmaList.get(i).tmn + " ";
+            //weatherInfo += "/tmx " +kmaList.get(i).tmx + " ";
 
             weatherInfo += "/hour " +kmaList.get(i).hour + " ";
             weatherInfo += "\n";

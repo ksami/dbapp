@@ -16,6 +16,7 @@ class KmaData
     String day;
     String wfEn;
     String hour;
+    String temp;
     String tmn;
     String tmx;
 }
@@ -90,6 +91,9 @@ public class XmlParser2
                                     case "hour":                                                    
                                         kmaTemp.hour = data.getChildNodes().item(0).getNodeValue();   
                                         break;
+                                    case "temp":
+                                        kmaTemp.temp = data.getChildNodes().item(0).getNodeValue();
+                                        break;
                                     case "tmn":
                                         kmaTemp.tmn = data.getChildNodes().item(0).getNodeValue();
                                         break;
@@ -111,8 +115,9 @@ public class XmlParser2
                 System.out.print("/day " + kmaList.get(i).day);
 
                 System.out.print("/wfEn " +kmaList.get(i).wfEn + " ");
-                System.out.print("/tmn " +kmaList.get(i).tmn + " ");
-                System.out.print("/tmx " +kmaList.get(i).tmx + " ");
+//                System.out.print("/tmn " +kmaList.get(i).tmn + " ");
+//                System.out.print("/tmx " +kmaList.get(i).tmx + " ");
+                System.out.print("/temp " +kmaList.get(i).temp + " ");
 
                 System.out.print("/hour " +kmaList.get(i).hour + " ");
                 System.out.println();
