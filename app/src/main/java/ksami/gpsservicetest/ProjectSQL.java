@@ -40,7 +40,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
         String createFPDB = String.format("CREATE TABLE %s (%s %s, %s %s, %s %s, %s %s, PRIMARY KEY (%s, %s, %s))", TABLE_NAME_FUTPOS, KEY_HOUR, "INTEGER", KEY_DAY_OF_WEEK, "INTEGER",
                 KEY_AREA, "TEXT", KEY_COUNT, "INTEGER", KEY_DAY_OF_WEEK, KEY_HOUR, KEY_AREA);
         String createCTDB = String.format("CREATE TABLE %s (%s %s PRIMARY KEY, %s %s, %s %s)", TABLE_NAME_COORD, KEY_AREA, "TEXT", KEY_X, "INTEGER", KEY_Y, "INTEGER");
-//        String createCTDB = "CREATE TABLE coordination_transit (Area_name TEXT PRIMARY KEY, Grid_X INTEGER, Grid_Y INTEGER)";
+
         db.execSQL(createCTDB);
         db.execSQL(createFPDB);
         db.execSQL(createUPDB);
@@ -99,8 +99,8 @@ public class ProjectSQL extends SQLiteOpenHelper {
 
     public LinkedList<QueryResult> defaultQuery() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "select day, hour, area, grid_x, grid_y from coordination_transit natural joins (select day, hour, area, rank() over (partition by day, hour order by sum(count) desc) as c_rank from future_position group by day, hour, area having c_rank = 1)";
-
+//        String query = "select day, hour, area, grid_x, grid_y from coordination_transit natural join (select day, hour, area, rank() over (partition by day, hour order by sum(count) desc) as c_rank from future_position group by day, hour, area having c_rank = 1)";
+        String query = "select day_of_week, hour, area_name, grid_x, grid_y from coordination_transit natural join ( select day_of_week, hour, area_name, (( select count(*) from future_position as B where A.day_of_week = B.day_of_week and A.hour = B.hour and A.count > B.count) + 1 ) as c_rank from future_position as A where c_rank = 1)";
         Cursor cursor = db.rawQuery(query, null);
         LinkedList<QueryResult> list = new LinkedList<QueryResult>();
         QueryResult r = null;
