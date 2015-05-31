@@ -4,9 +4,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:windowActionBar="false"
     tools:context="ksami.gpsservicetest.DisplayWeatherActivity">
 
-    <ScrollView
+    <!-- <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -19,7 +20,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-    </ScrollView>
+    </ScrollView> -->
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"></TableLayout>
 
 
 </RelativeLayout>

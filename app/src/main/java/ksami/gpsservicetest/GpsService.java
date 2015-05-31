@@ -193,7 +193,7 @@ public class GpsService extends Service {
 
             //database
             String area = getAddress(latitude, longitude);
-            sql.addCoord(gridxy[0], gridxy[1], area);
+            sql.insert_temp(gridxy[0], gridxy[1], area);
             Log.d("GPSService", "coord added to database");
         } catch (IOException e) {
             e.printStackTrace();

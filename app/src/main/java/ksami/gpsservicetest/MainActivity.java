@@ -25,8 +25,9 @@ import android.os.StrictMode;
 
 
 public class MainActivity extends Activity {
-    public static final String GRIDX = "ksami.gpsservicetest.gridx";
-    public static final String GRIDY = "ksami.gpsservicetest.gridy";
+//    public static final String GRIDX = "ksami.gpsservicetest.gridx";
+//    public static final String GRIDY = "ksami.gpsservicetest.gridy";
+//    public static final String AREA = "ksami.gpsservicetest.area";
 
     String TAG = "MainActivity";
 
@@ -119,12 +120,14 @@ public class MainActivity extends Activity {
 
     // Display weather info
     public void button3(View v){
-        int gridx = 59;
-        int gridy = 125;
+//        int gridx = 59;
+//        int gridy = 125;
+//        String area = "area";
 
         Intent intent = new Intent(this, DisplayWeatherActivity.class);
-        intent.putExtra(GRIDX, Integer.toString(gridx));
-        intent.putExtra(GRIDY, Integer.toString(gridy));
+//        intent.putExtra(GRIDX, Integer.toString(gridx));
+//        intent.putExtra(GRIDY, Integer.toString(gridy));
+//        intent.putExtra(AREA, area);
         startActivity(intent);
 
 
