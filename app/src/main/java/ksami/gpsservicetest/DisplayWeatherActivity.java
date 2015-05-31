@@ -76,7 +76,7 @@ public class DisplayWeatherActivity extends ActionBarActivity {
             image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             TextView text = new TextView(this);
-            String weatherInfo = "area: "+areaList.get(i) + " ";
+            String weatherInfo = "";
             weatherInfo += "hour: " +kmaList.get(i).hour + " ";
             weatherInfo += "weather: " +kmaList.get(i).wfEn + " ";
             weatherInfo += "temp: " +kmaList.get(i).temp + " ";
@@ -99,12 +99,19 @@ public class DisplayWeatherActivity extends ActionBarActivity {
             else if(rain)
                 image.setImageResource(R.drawable.rainy);
 
-
-            text.setText(weatherInfo);
-
+            //add image
             row[i].addView(image);
+
+            //add area
+            TextView areaText = new TextView(this);
+            areaText.setText(areaList.get(i));
+            row[i].addView(areaText);
+
+            //add weatherinfo
+            text.setText(weatherInfo);
             row[i].addView(text);
 
+            //add row to table
             layout.addView(row[i]);
         }
     }
