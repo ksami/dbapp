@@ -14,6 +14,7 @@ import org.w3c.dom.NodeList;
 //Data structure
 class KmaData
 {
+    String area;
     String day;
     String wfEn;
     String hour;
@@ -75,6 +76,7 @@ public class XmlParser2
                     {
                         NodeList dataList = Temp.getChildNodes();
                         KmaData kmaTemp = new KmaData();
+                        kmaTemp.area = "";
                         for (int j = 0; j < dataList.getLength(); j++)
                         {
                             Node data = dataList.item(j);

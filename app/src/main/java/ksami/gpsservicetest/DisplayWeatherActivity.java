@@ -2,6 +2,7 @@ package ksami.gpsservicetest;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +26,24 @@ public class DisplayWeatherActivity extends ActionBarActivity {
     //database
     MyApplication appState;
     ProjectSQL sql;
+    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
 
+        new Thread() {
+            public void run() {
+                connect();
+            }
+        }.start();
+//        connect();
+        Toast toast = Toast.makeText(getApplicationContext(), "Requesting information, please wait...", Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    public void connect() {
         appState = (MyApplication) getApplicationContext();
         sql = appState.getDb();
         sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
@@ -42,43 +55,54 @@ public class DisplayWeatherActivity extends ActionBarActivity {
 //        int gridy = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDY));
 //        String area = intent.getStringExtra(MainActivity.AREA);
 
-        ArrayList<KmaData> kmaList = new ArrayList<KmaData>();
-        ArrayList<String> areaList = new ArrayList<String>();
+        final ArrayList<KmaData> kmaList = new ArrayList<KmaData>();
         LinkedList<ProjectSQL.QueryResult> futurePos = sql.defaultQuery();
         Log.d("DisplayWeatherActivity", String.format("futurePos.size(): %d", futurePos.size()));
 
         try {
             //extract result for specified hour
-            for (int i = 0; i < futurePos.size(); i++) {
+            for (int i = 0; i < Math.min(8, futurePos.size()); i++) {
                 ProjectSQL.QueryResult res = futurePos.get(i);
                 int hour = res.hour;
                 int gridx = res.grid_x;
                 int gridy = res.grid_y;
                 String area = res.area;
-                KmaData kmadata = null;
+                KmaData kmadata = new KmaData();
 
                 ArrayList<KmaData> temp = XmlParser2.parsing(gridx, gridy);
                 if (temp.size() == 0) {
                     throw new Exception("no connection");
                 }
 
-                Log.d("XmlParser2", String.format("temp.get(%d).hour: %s", i, temp.get(i).hour));
+                Log.d("DisplayWeatherActivity", String.format("temp.get(%d).hour: %s", i, temp.get(i).hour));
                 //search for matching hour
                 for (int j = 0; j < 8; j++) {
-                    int obtainedHour = Integer.parseInt(temp.get(i).hour);
-                    if (obtainedHour == hour)
-                        kmadata = temp.get(i);
+                    int obtainedHour = Integer.parseInt(temp.get(j).hour);
+                    Log.d("DisplayWeatherActivity", String.format("j: %d", j));
+                    if (obtainedHour == hour) {
+                        Log.d("DisplayWeatherActivity", "hour match");
+                        kmadata = temp.get(j);
+                        kmadata.area = area;
+                    }
                 }
                 kmaList.add(kmadata);
-                areaList.add(area);
             }
+
+            handler.post(new Runnable() {
+                public void run() {
+                    display(kmaList);
+                }
+            });
+
         } catch (Exception e) {
             Log.e("DisplayWeatherActivity", "No connection");
             e.printStackTrace();
             Toast toast = Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_LONG);
             toast.show();
         }
+    }
 
+    public void display(final ArrayList<KmaData> kmaList) {
         try {
 
             if (kmaList.size() == 0) {
@@ -129,7 +153,7 @@ public class DisplayWeatherActivity extends ActionBarActivity {
 
                 //add area
                 TextView areaText = new TextView(this);
-                areaText.setText(areaList.get(i));
+                areaText.setText(kmaList.get(i).area);
                 row[i].addView(areaText);
 
                 //add weatherinfo

@@ -128,9 +128,6 @@ public class MainActivity extends Activity {
 //        intent.putExtra(GRIDY, Integer.toString(gridy));
 //        intent.putExtra(AREA, area);
         startActivity(intent);
-
-        Toast toast = Toast.makeText(getApplicationContext(), "Requesting information, please wait...", Toast.LENGTH_LONG);
-        toast.show();
     }
 
     void registerRestartAlarm() {
