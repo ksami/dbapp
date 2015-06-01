@@ -454,37 +454,9 @@ public class ProjectSQL extends SQLiteOpenHelper {
         createDatum(data);
     }
 
-//    public void createDatum(updata data) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        db.execSQL("INSERT INTO " + TABLE_NAME_USERPOS + " VALUES ("
-//                + data.date + " , "
-//                + data.hour + ", "
-//                + data.day + ", "
-//                + data.area + ")");
-//
-//        String query = "INSERT OR REPLACE INTO %s (%s, %s, %s, %s) VALUES(%d, %d, %s, COALESCE((SELECT %s FROM %s WHERE %s = %d AND %s = %d and %s = '%s'), 1)";
-//
-//        db.execSQL(String.format(query, TABLE_NAME_FUTPOS,
-//                KEY_DAY_OF_WEEK, KEY_HOUR, KEY_AREA, KEY_COUNT,
-//                data.day, data.hour, data.area,
-//                KEY_COUNT + "+1", TABLE_NAME_FUTPOS,
-//                KEY_DAY_OF_WEEK, data.day, KEY_HOUR, data.hour, KEY_AREA, data.area));
-//
-//        String subquery = "SELECT %s FROM %s WHERE %s = '%s'";
-//        String queryA = String.format(subquery, KEY_X, TABLE_NAME_COORD, KEY_AREA, data.area);
-//        String queryB = String.format(subquery, KEY_Y, TABLE_NAME_COORD, KEY_AREA, data.area);
-//        query = "INSERT OR REPLACE INTO %s (%s, %s, %s) VALUES('%s', COALESCE(%s, %d), COALESCE(%s, %d))";
-//        db.execSQL(String.format(query,
-//                TABLE_NAME_COORD, KEY_AREA, KEY_X, KEY_Y,
-//                data.area, queryA, data.x, queryB, data.y));
-//        db.close();
-//    }
     public void createDatum(updata data) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-//        Calendar calendar = Calendar.getInstance();
-//        int hours = calendar.get(Calendar.HOUR_OF_DAY);
         int hours = data.hour;
         String area = data.area;
         int x = data.x;
@@ -502,7 +474,6 @@ public class ProjectSQL extends SQLiteOpenHelper {
                 break;
         }
 
-//        int day = calendar.get(Calendar.DAY_OF_WEEK);
         int day = data.day;
         String date = data.date;
         db.execSQL("INSERT INTO " + TABLE_NAME_USERPOS + " VALUES ("

@@ -46,9 +46,9 @@ public class DisplayWeatherActivity extends ActionBarActivity {
     public void connect() {
         appState = (MyApplication) getApplicationContext();
         sql = appState.getDb();
-        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
-        sql.createData();
-        Log.d("DisplayWeatherActivity", "data inserted");
+//        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
+//        sql.createData();
+//        Log.d("DisplayWeatherActivity", "data inserted");
 
 //        Intent intent = getIntent();
 //        int gridx = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDX));
@@ -97,8 +97,6 @@ public class DisplayWeatherActivity extends ActionBarActivity {
         } catch (Exception e) {
             Log.e("DisplayWeatherActivity", "No connection");
             e.printStackTrace();
-            Toast toast = Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_LONG);
-            toast.show();
         }
     }
 
@@ -169,6 +167,16 @@ public class DisplayWeatherActivity extends ActionBarActivity {
         catch(Exception e){
             e.printStackTrace();
             Log.e("DisplayWeatherActivity", "no result");
+
+            TableLayout layout = (TableLayout) findViewById(R.id.tableLayout);
+            TableRow row = new TableRow(this);
+            TextView text = new TextView(this);
+            text.setText("No Results");
+            row.addView(text);
+            layout.addView(row);
+
+            Toast toast = Toast.makeText(getApplicationContext(), "No Results", Toast.LENGTH_LONG);
+            toast.show();
         }
 
     }
