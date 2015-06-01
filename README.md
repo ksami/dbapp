@@ -8,4 +8,4 @@
 - [x] Combine xml and gps
 - [x] Implement sqlite
 - [x] Combine gps and sqlite
-- [ ] Combine xml and sqlite
+- [x] Combine xml and sqlite
