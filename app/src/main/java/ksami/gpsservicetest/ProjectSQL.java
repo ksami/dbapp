@@ -45,6 +45,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
         db.execSQL(createCTDB);
         db.execSQL(createFPDB);
         db.execSQL(createUPDB);
+        db.execSQL("create trigger tg before insert on " + TABLE_NAME_USERPOS + " for each row begin delete from " + TABLE_NAME_USERPOS + " where julianday(NEW.timestamp) - julianday(Timestamp) >= 180; end");
 
     }
 
@@ -57,6 +58,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
 
 
     public void insert_temp(int x, int y, String area) {
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         Calendar calendar = Calendar.getInstance();
@@ -96,6 +98,9 @@ public class ProjectSQL extends SQLiteOpenHelper {
         db.execSQL(String.format(query,
                 TABLE_NAME_COORD, KEY_AREA, KEY_X, KEY_Y,
                 area, queryA, x, queryB, y));
+
+
+
         db.close();
     }
 
@@ -293,11 +298,11 @@ public class ProjectSQL extends SQLiteOpenHelper {
         createDatum(data);
         data.mod("2015-05-26", 9, 3, "서울특별시 은천동", 59, 125);
         createDatum(data);
-        data.mod("2015-05-26", 12, 3, "서울특별시 은천동", 59, 125);
+        data.mod("2015-05-26", 12, 3, "서울특별시 대학동", 59, 124);
         createDatum(data);
-        data.mod("2015-05-26", 15, 3, "서울특별시 은천동", 59, 125);
+        data.mod("2015-05-26", 15, 3, "서울특별시 대학동", 59, 124);
         createDatum(data);
-        data.mod("2015-05-26", 18, 3, "서울특별시 은천동", 59, 125);
+        data.mod("2015-05-26", 18, 3, "서울특별시 대학동", 59, 124);
         createDatum(data);
         data.mod("2015-05-26", 21, 3, "서울특별시 은천동", 59, 125);
         createDatum(data);
@@ -325,9 +330,9 @@ public class ProjectSQL extends SQLiteOpenHelper {
         createDatum(data);
         data.mod("2015-05-28", 9, 5, "서울특별시 은천동", 59, 125);
         createDatum(data);
-        data.mod("2015-05-28", 12, 5, "서울특별시 은천동", 59, 125);
+        data.mod("2015-05-28", 12, 5, "서울특별시 대학동", 59, 124);
         createDatum(data);
-        data.mod("2015-05-28", 15, 5, "서울특별시 은천동", 59, 125);
+        data.mod("2015-05-28", 15, 5, "서울특별시 대학동", 59, 124);
         createDatum(data);
         data.mod("2015-05-28", 18, 5, "서울특별시 봉천동", 59, 125);
         createDatum(data);
@@ -394,6 +399,8 @@ public class ProjectSQL extends SQLiteOpenHelper {
                 + hours + ", "
                 + day + ", '"
                 + area + "')");
+//db.execSQL("delete from " + TABLE_NAME_USERPOS + " where julianday('now') - julianday(Timestamp) >= 0");
+        //db.execSQL("delete from " + TABLE_NAME_USERPOS);
 
         String query = "INSERT OR REPLACE INTO %s (%s, %s, %s, %s) VALUES(%d, %d, '%s', COALESCE((SELECT %s FROM %s WHERE %s = %d AND %s = %d and %s = '%s'), 1))";
 
