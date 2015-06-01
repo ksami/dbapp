@@ -58,58 +58,69 @@ public class DisplayWeatherActivity extends ActionBarActivity {
         final ArrayList<KmaData> kmaList = new ArrayList<KmaData>();
 //        LinkedList<ProjectSQL.QueryResult> futurePos = sql.defaultQuery();
         ProjectSQL.QueryResult[] futurePos = sql.mymethod();
-//        Log.d("DisplayWeatherActivity", String.format("futurePos.size(): %d", futurePos.size()));
-
-        try {
-            //extract result for specified hour
-            for (int i = 0; i < Math.min(8, futurePos.length); i++) {
-                ProjectSQL.QueryResult res = futurePos[i];
-                int hour = res.hour;
-                int gridx = res.grid_x;
-                int gridy = res.grid_y;
-                String area = res.area;
-                KmaData kmadata = new KmaData();
-
-                ArrayList<KmaData> temp = XmlParser2.parsing(gridx, gridy);
-                if (temp.size() == 0) {
-                    throw new Exception("no connection");
-                }
-
-                Log.d("DisplayWeatherActivity", String.format("res.hour: %s", i, res.hour));
-                //search for matching hour
-                for (int j = 0; j < 8; j++) {
-                    int obtainedHour = Integer.parseInt(temp.get(j).hour);
-//                    int obtainedDay = Integer.parseInt(temp.get(j).day);
-                    if(obtainedHour == 24) obtainedHour = 0;
-                    Log.d("DisplayWeatherActivity", String.format("j: %d, oh: %d, h: %d", j, obtainedHour, hour));
-                    if (obtainedHour == hour) {
-                        Log.d("DisplayWeatherActivity", "hour match");
-                        kmadata = temp.get(j);
-                        kmadata.area = area;
-                    }
-                }
-                kmaList.add(kmadata);
-            }
-
-            kmaList.add(8,kmaList.get(0));
-            kmaList.remove(0);
-
+        if(futurePos==null) {
             handler.post(new Runnable() {
                 public void run() {
-                    display(kmaList);
+                    display(null);
                 }
             });
+        }
+        else {
+//        Log.d("DisplayWeatherActivity", String.format("futurePos.size(): %d", futurePos.size()));
 
-        } catch (Exception e) {
-            Log.e("DisplayWeatherActivity", "No connection");
-            e.printStackTrace();
+            try {
+                //extract result for specified hour
+                for (int i = 0; i < Math.min(8, futurePos.length); i++) {
+                    ProjectSQL.QueryResult res = futurePos[i];
+                    int hour = res.hour;
+                    int gridx = res.grid_x;
+                    int gridy = res.grid_y;
+                    String area = res.area;
+                    KmaData kmadata = new KmaData();
+
+                    ArrayList<KmaData> temp = XmlParser2.parsing(gridx, gridy);
+                    if (temp.size() == 0) {
+                        throw new Exception("no connection");
+                    }
+
+                    Log.d("DisplayWeatherActivity", String.format("res.hour: %s", i, res.hour));
+                    //search for matching hour
+                    for (int j = 0; j < 8; j++) {
+                        int obtainedHour = Integer.parseInt(temp.get(j).hour);
+                        //                    int obtainedDay = Integer.parseInt(temp.get(j).day);
+                        if (obtainedHour == 24) obtainedHour = 0;
+                        Log.d("DisplayWeatherActivity", String.format("j: %d, oh: %d, h: %d", j, obtainedHour, hour));
+                        if (obtainedHour == hour) {
+                            Log.d("DisplayWeatherActivity", "hour match");
+                            kmadata = temp.get(j);
+                            kmadata.area = area;
+                        }
+                    }
+                    kmaList.add(kmadata);
+                }
+
+                kmaList.add(8, kmaList.get(0));
+                kmaList.remove(0);
+
+                handler.post(new Runnable() {
+                    public void run() {
+                        display(kmaList);
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e("DisplayWeatherActivity", "No connection");
+                e.printStackTrace();
+            }
         }
     }
 
     public void display(final ArrayList<KmaData> kmaList) {
         try {
-
-            if (kmaList.size() == 0) {
+            if(kmaList == null){
+                throw new Exception("not enough data");
+            }
+            else if (kmaList.size() == 0) {
                 throw new Exception("no result");
             }
             Toast toast = Toast.makeText(getApplicationContext(), "Data obtained, displaying data", Toast.LENGTH_LONG);
@@ -138,7 +149,7 @@ public class DisplayWeatherActivity extends ActionBarActivity {
                 } else {
                     weatherInfo += kmaList.get(i).hour + "00: \n";
                 }
-                weatherInfo += "day: " + kmaList.get(i).day +"\n";
+//                weatherInfo += "day: " + kmaList.get(i).day +"\n";
                 weatherInfo += kmaList.get(i).area +"\n";
                 weatherInfo += kmaList.get(i).temp + "°C, ";
                 weatherInfo += kmaList.get(i).wfEn;
@@ -179,11 +190,11 @@ public class DisplayWeatherActivity extends ActionBarActivity {
             TableLayout layout = (TableLayout) findViewById(R.id.tableLayout);
             TableRow row = new TableRow(this);
             TextView text = new TextView(this);
-            text.setText("No Results");
+            text.setText("Not Enough Data");
             row.addView(text);
             layout.addView(row);
 
-            Toast toast = Toast.makeText(getApplicationContext(), "No Results", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), "Not Enough Data", Toast.LENGTH_LONG);
             toast.show();
         }
 

@@ -47,7 +47,7 @@ public class GpsService extends Service {
 
         this.mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         provider = LocationManager.GPS_PROVIDER;
-        mlocManager.requestLocationUpdates(provider, 3*60*60*1000, 10, new LocationListener() {
+        mlocManager.requestLocationUpdates(provider, 60*1000, 0, new LocationListener() {
             public void onStatusChanged(String provider, int status, Bundle extras) {}
             public void onProviderEnabled(String provider) {}
             public void onProviderDisabled(String provider) {}

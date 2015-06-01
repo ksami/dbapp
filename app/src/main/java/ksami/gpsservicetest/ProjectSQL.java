@@ -45,6 +45,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
         db.execSQL(createCTDB);
         db.execSQL(createFPDB);
         db.execSQL(createUPDB);
+
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -131,7 +132,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
         int prev = -1;
 
         if(cursor.moveToFirst()) {
-            while(cursor.moveToNext()){
+            do{
                 int v1 = cursor.getInt(0);
                 int v2 = cursor.getInt(1);
                 String v3 = cursor.getString(2);
@@ -139,11 +140,14 @@ public class ProjectSQL extends SQLiteOpenHelper {
                 int v5 = cursor.getInt(4);
                 r = new QueryResult(v1, v2, v3, v4, v5);
                 if(v2 != prev) list.add(r);
-                System.out.println("Defaultquery result : " + v1 + v2 + v3 + v4 + v5);
+                if(v2 != prev) System.out.println("Defaultquery result : day : " + v1 + " hour : " + v2);
                 prev = v2;
-            }
+            }while(cursor.moveToNext());
         }
         db.close();
+        System.out.println("+++++++   list.size(): " + list.size());
+        if(list.size() < 55)
+            return null;
         return list;
     }
 
@@ -179,6 +183,7 @@ public class ProjectSQL extends SQLiteOpenHelper {
         if((hour%3)!=0) hour = (hour / 3) * 3 + 3;
 
         LinkedList<QueryResult> r = defaultQuery();
+        if(r==null) return null;
         QueryResult first = r.getFirst();
         QueryResult x = null;
         QueryResult last = r.getLast();
@@ -247,102 +252,6 @@ public class ProjectSQL extends SQLiteOpenHelper {
         data.mod("2015-05-17", 18, 1, "서울특별시 중앙동", 59, 125);
         createDatum(data);
         data.mod("2015-05-17", 21, 1, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-18", 0, 2, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-18", 3, 2, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-18", 6, 2, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-18", 9, 2, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-18", 12, 2, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-18", 15, 2, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-18", 18, 2, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-18", 21, 2, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-19", 0, 3, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-19", 3, 3, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-19", 6, 3, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-19", 9, 3, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-19", 12, 3, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-19", 15, 3, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-19", 18, 3, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-19", 21, 3, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-20", 0, 4, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-20", 3, 4, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-20", 6, 4, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-20", 9, 4, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-20", 12, 4, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-20", 15, 4, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-20", 18, 4, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-20", 21, 4, "서울특별시 봉천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-21", 0, 5, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-21", 3, 5, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-21", 6, 5, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-21", 9, 5, "서울특별시 봉천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-21", 12, 5, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-21", 15, 5, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-21", 18, 5, "서울특별시 낙성대동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-21", 21, 5, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-22", 0, 6, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-22", 3, 6, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-22", 6, 6, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-22", 9, 6, "서울특별시 봉천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-22", 12, 6, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-22", 15, 6, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-22", 18, 6, "서울특별시 대학동", 59, 124);
-        createDatum(data);
-        data.mod("2015-05-22", 21, 6, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-22", 24, 6, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-23", 3, 7, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-23", 6, 7, "서울특별시 은천동", 59, 125);
-        createDatum(data);
-        data.mod("2015-05-23", 9, 7, "서울특별시 행당동", 61, 127);
-        createDatum(data);
-        data.mod("2015-05-23", 12, 7, "서울특별시 사근동", 61, 126);
-        createDatum(data);
-        data.mod("2015-05-23", 15, 7, "서울특별시 화양동", 61, 126);
-        createDatum(data);
-        data.mod("2015-05-23", 18, 7, "서울특별시 성수2가3동", 61, 126);
-        createDatum(data);
-        data.mod("2015-05-23", 21, 7, "서울특별시 은천동", 59, 125);
         createDatum(data);
         data.mod("2015-05-24", 0, 1, "서울특별시 은천동", 59, 125);
         createDatum(data);
