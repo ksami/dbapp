@@ -46,9 +46,9 @@ public class DisplayWeatherActivity extends ActionBarActivity {
     public void connect() {
         appState = (MyApplication) getApplicationContext();
         sql = appState.getDb();
-//        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
-//        sql.createData();
-//        Log.d("DisplayWeatherActivity", "data inserted");
+        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
+        sql.createData();
+        Log.d("DisplayWeatherActivity", "data inserted");
 
 //        Intent intent = getIntent();
 //        int gridx = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDX));
@@ -56,13 +56,14 @@ public class DisplayWeatherActivity extends ActionBarActivity {
 //        String area = intent.getStringExtra(MainActivity.AREA);
 
         final ArrayList<KmaData> kmaList = new ArrayList<KmaData>();
-        LinkedList<ProjectSQL.QueryResult> futurePos = sql.defaultQuery();
-        Log.d("DisplayWeatherActivity", String.format("futurePos.size(): %d", futurePos.size()));
+//        LinkedList<ProjectSQL.QueryResult> futurePos = sql.defaultQuery();
+        ProjectSQL.QueryResult[] futurePos = sql.mymethod();
+//        Log.d("DisplayWeatherActivity", String.format("futurePos.size(): %d", futurePos.size()));
 
         try {
             //extract result for specified hour
-            for (int i = 0; i < Math.min(8, futurePos.size()); i++) {
-                ProjectSQL.QueryResult res = futurePos.get(i);
+            for (int i = 0; i < Math.min(8, futurePos.length); i++) {
+                ProjectSQL.QueryResult res = futurePos[i];
                 int hour = res.hour;
                 int gridx = res.grid_x;
                 int gridy = res.grid_y;
@@ -74,11 +75,13 @@ public class DisplayWeatherActivity extends ActionBarActivity {
                     throw new Exception("no connection");
                 }
 
-                Log.d("DisplayWeatherActivity", String.format("temp.get(%d).hour: %s", i, temp.get(i).hour));
+                Log.d("DisplayWeatherActivity", String.format("res.hour: %s", i, res.hour));
                 //search for matching hour
                 for (int j = 0; j < 8; j++) {
                     int obtainedHour = Integer.parseInt(temp.get(j).hour);
-                    Log.d("DisplayWeatherActivity", String.format("j: %d", j));
+//                    int obtainedDay = Integer.parseInt(temp.get(j).day);
+                    if(obtainedHour == 24) obtainedHour = 0;
+                    Log.d("DisplayWeatherActivity", String.format("j: %d, oh: %d, h: %d", j, obtainedHour, hour));
                     if (obtainedHour == hour) {
                         Log.d("DisplayWeatherActivity", "hour match");
                         kmadata = temp.get(j);
@@ -87,6 +90,9 @@ public class DisplayWeatherActivity extends ActionBarActivity {
                 }
                 kmaList.add(kmadata);
             }
+
+            kmaList.add(8,kmaList.get(0));
+            kmaList.remove(0);
 
             handler.post(new Runnable() {
                 public void run() {
@@ -117,6 +123,7 @@ public class DisplayWeatherActivity extends ActionBarActivity {
             layoutParam.weight = 1;
 
             for (int i = 0; i < kmaList.size(); i++) {
+                Log.d("DisplayWeatherActivity", String.format("kmalist(%d): h: %s, d: %s", i, kmaList.get(i).hour, kmaList.get(i).day));
                 row[i] = new TableRow(this);
 
                 ImageView image = new ImageView(this);
@@ -131,6 +138,7 @@ public class DisplayWeatherActivity extends ActionBarActivity {
                 } else {
                     weatherInfo += kmaList.get(i).hour + "00: \n";
                 }
+                weatherInfo += "day: " + kmaList.get(i).day +"\n";
                 weatherInfo += kmaList.get(i).area +"\n";
                 weatherInfo += kmaList.get(i).temp + "°C, ";
                 weatherInfo += kmaList.get(i).wfEn;

@@ -24,16 +24,6 @@ class KmaData
 }
 public class XmlParser2
 {
-    public static void main(String[] args){
-
-        int gridx,gridy;
-        gridx = 59;
-        gridy = 125;
-        //TODO : make gridx,gridy input interface
-
-        parsing(gridx, gridy);
-
-    }
     public static ArrayList<KmaData> parsing(int gridx,int gridy){
     
         String rssFeed = "http://www.kma.go.kr/wid/queryDFS.jsp?gridx=%s&gridy=%s";
@@ -62,13 +52,13 @@ public class XmlParser2
 
             NodeList bodyList = doc.getElementsByTagName("data");   //split using data tag "<data> ... </data>"
             
-            for (int i = 0; i < bodyList.getLength(); i++)
+            for (int i = 0; i < 8; i++)
             {
                 Node dataNode = bodyList.item(i);
-                Node Temp = dataNode.getNextSibling();
+                Node Temp = dataNode;
                 while (true)
                 {
-                    Temp = Temp.getNextSibling();
+
                          
                     if (Temp == null)
                         break;
@@ -109,6 +99,7 @@ public class XmlParser2
                         kmaList.add(kmaTemp);
                         kmaTemp = null;
                     }
+                    Temp = Temp.getNextSibling();
                 }
             }
 
