@@ -7,27 +7,22 @@
     android:windowActionBar="false"
     tools:context="ksami.gpsservicetest.DisplayWeatherActivity">
 
-    <!-- <ScrollView
+    <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
-        android:fillViewport="true"
-        android:background="#ff449ad5">
+        android:fillViewport="true">
 
-        <TextView android:id="@+id/textViewWeatherInfo"
-            android:text="weather info here"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <TableLayout
+                android:id="@+id/tableLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"></TableLayout>
 
-    </ScrollView> -->
+    </ScrollView>
 
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"></TableLayout>
 
 
 </RelativeLayout>

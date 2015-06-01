@@ -108,6 +108,8 @@ public class DisplayWeatherActivity extends ActionBarActivity {
             if (kmaList.size() == 0) {
                 throw new Exception("no result");
             }
+            Toast toast = Toast.makeText(getApplicationContext(), "Data obtained, displaying data", Toast.LENGTH_LONG);
+            toast.show();
 
             //display in a table
             TableLayout layout = (TableLayout) findViewById(R.id.tableLayout);
@@ -120,15 +122,20 @@ public class DisplayWeatherActivity extends ActionBarActivity {
                 row[i] = new TableRow(this);
 
                 ImageView image = new ImageView(this);
-                TableRow.LayoutParams rowParam = new TableRow.LayoutParams(64, 64);
+                TableRow.LayoutParams rowParam = new TableRow.LayoutParams(96, 96);
                 image.setLayoutParams(rowParam);
                 image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                 TextView text = new TextView(this);
                 String weatherInfo = "";
-                weatherInfo += "hour: " + kmaList.get(i).hour + " ";
-                weatherInfo += "weather: " + kmaList.get(i).wfEn + " ";
-                weatherInfo += "temp: " + kmaList.get(i).temp + " ";
+                if((Integer.parseInt(kmaList.get(i).hour))<12){
+                    weatherInfo += "0" + kmaList.get(i).hour + "00: \n";
+                } else {
+                    weatherInfo += kmaList.get(i).hour + "00: \n";
+                }
+                weatherInfo += kmaList.get(i).area +"\n";
+                weatherInfo += kmaList.get(i).temp + "°C, ";
+                weatherInfo += kmaList.get(i).wfEn;
 
                 String weather = kmaList.get(i).wfEn.toLowerCase();
                 Boolean clear = weather.contains("clear");
@@ -150,11 +157,6 @@ public class DisplayWeatherActivity extends ActionBarActivity {
 
                 //add image
                 row[i].addView(image);
-
-                //add area
-                TextView areaText = new TextView(this);
-                areaText.setText(kmaList.get(i).area);
-                row[i].addView(areaText);
 
                 //add weatherinfo
                 text.setText(weatherInfo);
