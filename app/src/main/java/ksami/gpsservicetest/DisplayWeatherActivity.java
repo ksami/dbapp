@@ -4,15 +4,18 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -30,93 +33,119 @@ public class DisplayWeatherActivity extends ActionBarActivity {
 
         appState = (MyApplication) getApplicationContext();
         sql = appState.getDb();
+        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
+        sql.createData();
+        Log.d("DisplayWeatherActivity", "data inserted");
 
 //        Intent intent = getIntent();
 //        int gridx = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDX));
 //        int gridy = Integer.parseInt(intent.getStringExtra(MainActivity.GRIDY));
 //        String area = intent.getStringExtra(MainActivity.AREA);
 
-        ArrayList<KmaData> kmaList = null;
-        ArrayList<String> areaList = null;
+        ArrayList<KmaData> kmaList = new ArrayList<KmaData>();
+        ArrayList<String> areaList = new ArrayList<String>();
         LinkedList<ProjectSQL.QueryResult> futurePos = sql.defaultQuery();
-        //extract result for specified hour
-        for(int i=0; i<futurePos.size(); i++) {
-            ProjectSQL.QueryResult res = futurePos.get(i);
-            int hour = res.hour;
-            int gridx = res.grid_x;
-            int gridy = res.grid_y;
-            String area = res.area;
-            KmaData kmadata = null;
+        Log.d("DisplayWeatherActivity", String.format("futurePos.size(): %d", futurePos.size()));
 
-            ArrayList<KmaData> temp = XmlParser2.parsing(gridx, gridy);
-            //search for matching hour
-            for(int j = 0; j < 8; j++) {
-                int obtainedHour = Integer.parseInt(temp.get(i).hour);
-                if(obtainedHour == hour)
-                    kmadata = temp.get(i);
+        try {
+            //extract result for specified hour
+            for (int i = 0; i < futurePos.size(); i++) {
+                ProjectSQL.QueryResult res = futurePos.get(i);
+                int hour = res.hour;
+                int gridx = res.grid_x;
+                int gridy = res.grid_y;
+                String area = res.area;
+                KmaData kmadata = null;
+
+                ArrayList<KmaData> temp = XmlParser2.parsing(gridx, gridy);
+                if (temp.size() == 0) {
+                    throw new Exception("no connection");
+                }
+
+                Log.d("XmlParser2", String.format("temp.get(%d).hour: %s", i, temp.get(i).hour));
+                //search for matching hour
+                for (int j = 0; j < 8; j++) {
+                    int obtainedHour = Integer.parseInt(temp.get(i).hour);
+                    if (obtainedHour == hour)
+                        kmadata = temp.get(i);
+                }
+                kmaList.add(kmadata);
+                areaList.add(area);
             }
-            kmaList.add(kmadata);
-            areaList.add(area);
+        } catch (Exception e) {
+            Log.e("DisplayWeatherActivity", "No connection");
+            e.printStackTrace();
+            Toast toast = Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_LONG);
+            toast.show();
         }
 
+        try {
 
-        //display in a table
-        TableLayout layout = (TableLayout)findViewById(R.id.tableLayout);
-        TableLayout.LayoutParams layoutParam = new TableLayout.LayoutParams();
-        TableRow[] row = new TableRow[8];
-        layoutParam.setMargins(1, 1, 1, 1);
-        layoutParam.weight = 1;
+            if (kmaList.size() == 0) {
+                throw new Exception("no result");
+            }
 
-        for(int i = 0; i < 8; i++) {
-            row[i] = new TableRow(this);
+            //display in a table
+            TableLayout layout = (TableLayout) findViewById(R.id.tableLayout);
+            TableLayout.LayoutParams layoutParam = new TableLayout.LayoutParams();
+            TableRow[] row = new TableRow[8];
+            layoutParam.setMargins(1, 1, 1, 1);
+            layoutParam.weight = 1;
 
-            ImageView image = new ImageView(this);
-            TableRow.LayoutParams rowParam = new TableRow.LayoutParams(64, 64);
-            image.setLayoutParams(rowParam);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            for (int i = 0; i < kmaList.size(); i++) {
+                row[i] = new TableRow(this);
 
-            TextView text = new TextView(this);
-            String weatherInfo = "";
-            weatherInfo += "hour: " +kmaList.get(i).hour + " ";
-            weatherInfo += "weather: " +kmaList.get(i).wfEn + " ";
-            weatherInfo += "temp: " +kmaList.get(i).temp + " ";
+                ImageView image = new ImageView(this);
+                TableRow.LayoutParams rowParam = new TableRow.LayoutParams(64, 64);
+                image.setLayoutParams(rowParam);
+                image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            String weather = kmaList.get(i).wfEn.toLowerCase();
-            Boolean clear = weather.contains("clear");
-            Boolean cloud = weather.contains("cloudy");
-            Boolean partly = weather.contains("partly") || weather.contains("mostly");
-            Boolean rain = weather.contains("rain");
-            Boolean snow = weather.contains("snow");
+                TextView text = new TextView(this);
+                String weatherInfo = "";
+                weatherInfo += "hour: " + kmaList.get(i).hour + " ";
+                weatherInfo += "weather: " + kmaList.get(i).wfEn + " ";
+                weatherInfo += "temp: " + kmaList.get(i).temp + " ";
 
-            if(clear)
-                image.setImageResource(R.drawable.sunny);
-            else if(cloud && partly)
-                image.setImageResource(R.drawable.half_cloudy);
-            else if(cloud)
-                image.setImageResource(R.drawable.cloudy);
-            else if(snow)
-                image.setImageResource(R.drawable.snowy);
-            else if(rain)
-                image.setImageResource(R.drawable.rainy);
+                String weather = kmaList.get(i).wfEn.toLowerCase();
+                Boolean clear = weather.contains("clear");
+                Boolean cloud = weather.contains("cloudy");
+                Boolean partly = weather.contains("partly") || weather.contains("mostly");
+                Boolean rain = weather.contains("rain");
+                Boolean snow = weather.contains("snow");
 
-            //add image
-            row[i].addView(image);
+                if (clear)
+                    image.setImageResource(R.drawable.sunny);
+                else if (cloud && partly)
+                    image.setImageResource(R.drawable.half_cloudy);
+                else if (cloud)
+                    image.setImageResource(R.drawable.cloudy);
+                else if (snow)
+                    image.setImageResource(R.drawable.snowy);
+                else if (rain)
+                    image.setImageResource(R.drawable.rainy);
 
-            //add area
-            TextView areaText = new TextView(this);
-            areaText.setText(areaList.get(i));
-            row[i].addView(areaText);
+                //add image
+                row[i].addView(image);
 
-            //add weatherinfo
-            text.setText(weatherInfo);
-            row[i].addView(text);
+                //add area
+                TextView areaText = new TextView(this);
+                areaText.setText(areaList.get(i));
+                row[i].addView(areaText);
 
-            //add row to table
-            layout.addView(row[i]);
+                //add weatherinfo
+                text.setText(weatherInfo);
+                row[i].addView(text);
+
+                //add row to table
+                layout.addView(row[i]);
+            }
         }
+        catch(Exception e){
+            e.printStackTrace();
+            Log.e("DisplayWeatherActivity", "no result");
+        }
+
     }
-
-
         /*
         String weatherInfo = "";
         for (int i = 0; i < 8; i++)  //display result

@@ -2,6 +2,7 @@ package ksami.gpsservicetest;
 
 import android.util.Log;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -122,7 +123,8 @@ public class XmlParser2
                 System.out.print("/hour " +kmaList.get(i).hour + " ");
                 System.out.println();
             }
-        }catch (Exception e){
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
         return kmaList;

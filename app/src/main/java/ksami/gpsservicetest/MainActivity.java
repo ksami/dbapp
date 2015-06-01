@@ -20,8 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.os.StrictMode;
-
-
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -130,7 +129,8 @@ public class MainActivity extends Activity {
 //        intent.putExtra(AREA, area);
         startActivity(intent);
 
-
+        Toast toast = Toast.makeText(getApplicationContext(), "Requesting information, please wait...", Toast.LENGTH_LONG);
+        toast.show();
     }
 
     void registerRestartAlarm() {
